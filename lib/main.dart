@@ -3,6 +3,7 @@ import 'package:video_conference/ui/dashboard.dart';
 
 void main() {
   runApp(const MaterialApp(
+    debugShowCheckedModeBanner: false,
     home: Dashboartd(),
   ));
 }

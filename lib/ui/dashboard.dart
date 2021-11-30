@@ -11,8 +11,9 @@ class Dashboartd extends StatefulWidget {
 }
 
 class _DashboartdState extends State<Dashboartd> {
-  bool _isSound = true;
-  bool _isCamera = true;
+  final GlobalKey<FormState> _key = GlobalKey();
+  bool _isSoundOn = true;
+  bool _isCameraOn = true;
 
   final TextEditingController _codeController = TextEditingController();
   final TextEditingController _namaController = TextEditingController();
@@ -30,62 +31,81 @@ class _DashboartdState extends State<Dashboartd> {
         child: Padding(
           padding: const EdgeInsets.fromLTRB(10, 20, 10, 10),
           child: SafeArea(
-              child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextField(
-                controller: _namaController,
-                decoration: const InputDecoration(
-                  label: Text('Nama Kamu'),
-                  border: OutlineInputBorder(),
-                ),
-                focusNode: _nameCode,
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              TextField(
-                controller: _codeController,
-                decoration: const InputDecoration(
-                  label: Text('Meeting ID'),
-                  border: OutlineInputBorder(),
-                ),
-                focusNode: _codeNode,
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              CheckboxListTile(
-                title: const Text('Sound'),
-                value: _isSound,
-                onChanged: (checkstat) {
-                  setState(() {
-                    _isSound = checkstat!;
-                  });
-                },
-              ),
-              CheckboxListTile(
-                title: const Text('Camera'),
-                value: _isCamera,
-                onChanged: (checkstat) {
-                  setState(() {
-                    _isCamera = checkstat!;
-                  });
-                },
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                    onPressed: () {
-                      _joinRoom();
-                    },
-                    child: const Text(
-                      'Join',
-                    )),
-              ),
-            ],
-          )),
+            child: Form(
+                key: _key,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFormField(
+                      controller: _namaController,
+                      decoration: const InputDecoration(
+                        label: Text('Nama Kamu'),
+                        border: OutlineInputBorder(),
+                      ),
+                      focusNode: _nameCode,
+                      validator: (value) {
+                        if (value.toString().isEmpty) {
+                          return 'Nama tidak boleh kosong';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    TextFormField(
+                      controller: _codeController,
+                      decoration: const InputDecoration(
+                        label: Text('Meeting ID'),
+                        border: OutlineInputBorder(),
+                      ),
+                      focusNode: _codeNode,
+                      validator: (value) {
+                        if (value.toString().isEmpty) {
+                          return 'Meeting ID tidak boleh kosong';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    CheckboxListTile(
+                      title: const Text('Mikrofon'),
+                      value: _isSoundOn,
+                      onChanged: (checkstat) {
+                        setState(() {
+                          _isSoundOn = checkstat!;
+                        });
+                      },
+                    ),
+                    CheckboxListTile(
+                      title: const Text('Kamera'),
+                      value: _isCameraOn,
+                      onChanged: (checkstat) {
+                        setState(() {
+                          _isCameraOn = checkstat!;
+                        });
+                      },
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              if (_key.currentState!.validate()) {
+                                _joinRoom();
+                              }
+                            });
+                          },
+                          child: const Text(
+                            'Join/Create',
+                          )),
+                    ),
+                  ],
+                )),
+          ),
         ),
       ),
     );
@@ -106,8 +126,8 @@ class _DashboartdState extends State<Dashboartd> {
 
       var options = JitsiMeetingOptions(room: _codeController.text)
         ..userDisplayName = _namaController.text
-        ..audioMuted = !_isSound
-        ..videoMuted = !_isCamera;
+        ..audioMuted = !_isSoundOn
+        ..videoMuted = !_isCameraOn;
 
       debugPrint('JitsiMeetingOptions : $options');
 
