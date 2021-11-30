@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:jitsi_meet/jitsi_meet.dart';
 
 class Dashboartd extends StatefulWidget {
@@ -46,7 +47,8 @@ class _DashboartdState extends State<Dashboartd> {
                       focusNode: _nameCode,
                       validator: (value) {
                         if (value.toString().isEmpty) {
-                          return 'Nama tidak boleh kosong';
+                          // return 'Nama tidak boleh kosong';
+                          return _showToast();
                         }
                         return null;
                       },
@@ -63,7 +65,8 @@ class _DashboartdState extends State<Dashboartd> {
                       focusNode: _codeNode,
                       validator: (value) {
                         if (value.toString().isEmpty) {
-                          return 'Meeting ID tidak boleh kosong';
+                          // return 'Meeting ID tidak boleh kosong';
+                          return _showToast();
                         }
                         return null;
                       },
@@ -142,5 +145,15 @@ class _DashboartdState extends State<Dashboartd> {
     } catch (error) {
       debugPrint('error : $error');
     }
+  }
+
+  _showToast() {
+    Fluttertoast.showToast(
+      msg: 'Form nama dan meeting ID wajib diisi',
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      fontSize: 12,
+    );
   }
 }
